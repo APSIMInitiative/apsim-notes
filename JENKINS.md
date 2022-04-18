@@ -95,25 +95,33 @@ See the "Apsim Releases" section for an overview of the release process/cycle fo
 
 ## Apsim Tests
 
-The apsim test suite job tests a pull request to ensure that its changes don't cause any regressions. It consists of 2 stages run in parallel: the unit tests and the validation tests. Both stages are run inside the apsiminitiative/apsimng-build:latest docker container. The dockerfiles can be found [here](https://github.com/APSIMInitiative/APSIM.Docker), and are hosted on [dockerhub](https://hub.docker.com/r/apsiminitiative/apsimng-build).
+Testing apsim pull requests is handled by a job called apsim. The jenkins config file is located in the [Jenkins](https://github.com/APSIMInitiative/Jenkins/tree/master/NextGen/build/jenkinsfile) repo. The apsim test suite job tests a pull request to ensure that its changes don't cause any regressions. It consists of 2 stages run in parallel: the unit tests and the validation tests. Both stages are run inside the apsiminitiative/apsimng-build:latest docker container. The dockerfiles can be found [here](https://github.com/APSIMInitiative/APSIM.Docker), and are hosted on [dockerhub](https://hub.docker.com/r/apsiminitiative/apsimng-build). This image is updated only irregularly, and needs to be done manually. Generally it's only updated when we want to change .net versions for apsim, or to update one of the build dependencies.
 
 The unit tests take a few minutes to run on a 4 core Linux VM. They require a github personal access token in order to verify that the pull request actually references an issue. If it doesn't, the build will immediately fail.
 
-The validation tests run all .apsimx files in the repository. If any simulation fails, the entire build is failed. If no simulations fail, the performance tests collector will run (more on this below). If this succeeds, then the autodocs are built and uploaded to the APSIM.Builds API (POST /api/nextgen/upload/docs).
+The validation tests run all .apsimx files in the repository. If any simulation fails, the entire build is failed. If no simulations fail, the [performance tests](POSTATS.md) collector will run. If this succeeds, then the autodocs are built and uploaded to the APSIM.Builds API (POSTed to /api/nextgen/upload/docs).
 
+Credentials required by the validation tests:
 
+- Several of the validation files reference datasets which are not publicly accessible, and which are stored in password-protected .zip files
+- Uploading the documentation requires a JWT
+- A github PAT is required to check if the PR being tested actually references an issue
 
 ## Apsim Releases
 
-Releasing new apsim builds is handled by a job called apsim-release.
+Releasing new apsim builds is handled by a job called apsim-release. The jenkins file is located in the [Jenkins](https://github.com/APSIMInitiative/Jenkins/tree/master/NextGen/deploy/jenkinsfile) repo. This job will build [installers](INSTALLERS.md) for each of the 3 target platforms (Linux, mac, windows), updates the [official docker images](DOCKER.md) on dockerhub, and updates the [netlify site](NETLIFY.md). If all of this succeeds, the build will be "released" by calling a REST endpoint in the [builds API](BUILDS.md). Once the build is released in this way, a link to the build will start appearing in places like the [downloads page](https://registration.apsim.info) and the upgrade area of the apsim GUI.
+
+The windows installer unfortunately needs to be built on a windows VM (technically we could do it in Linux, but the assemblies would be missing some features provided by windows-only APIs).
 
 ## Old apsim tests
 
-Testing of old apsim pull requests is handled by a job called oldapsim.
+Testing of old apsim pull requests is handled by a job called oldapsim. The jenkins file is located in the [APSIM.Docker](https://github.com/APSIMInitiative/APSIM.Docker/tree/master/OldApsim/Compile/Jenkinsfile) repo, along with most of the scripting infrastructure. In the long run it would be nice to move the jenkins-related stuff into the jenkins repository. The job itself runs on windows, and most of the build runs inside a docker image which is rebuilt on each build.
+
+The job will run the BobBuildAndRun target of the old apsim job scheduler, which will run all of the .apsim files in the repository. The resultant .out and .sum files will then be diffed against the git HEAD, and if any have been modified, the changed files will be copied into a single archive and uploaded to the apsimdev FTP server, and the build will be marked as failed. If the build passes, the installer files for this build will be generated and uploaded to the apsimdev FTP server.
 
 ## Old apsim releases
 
-Releasing new old apsim builds (new apsim classic builds) is handled by a job called oldapsim-release.
+Releasing new old apsim builds (new apsim classic builds) is handled by a job called oldapsim-release. The jenkins file is located in the [APSIM.Docker](https://github.com/APSIMInitiative/APSIM.Docker/tree/master/OldApsim/Release/Jenkinsfile) repo. The job will unnecessarily rebuild the installers (unnecessary because they were built and uploaded when the PR was run, and the newly-generated files are not uploaded or anywhere). The build really boils down to calling the old apsim REST api to "release" the build, which will cause the build to appear on the [downloads page](https://registration.apsim.info). This currently runs on windows, but could, in principle, run on Linux (cheaper), unless we decide to build the installers during the release jobs, as we do in new apsim.
 
 ## Comms with GitHub
 
