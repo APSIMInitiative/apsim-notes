@@ -2,6 +2,10 @@
 
 The apsim registration website is an asp .net core web application running in docker behind a reverse proxy (apache) on a Linux GCP VM (apsim-web). The source code is [on github](https://github.com/APSIMInitiative/APSIM.Registration). The website allows users to register for and download apsim. The website consists of a REST API (RegistrationController) and a single-page application consisting of the landing page, registration form, and download page. The docker configuration is stored in the [apsim-web](https://github.com/hol430/apsim-web) repository. The registration data is stored in a MariaDB database.
 
+## Registration Emails
+
+The registration emails are sent via [SendGrid](https://app.sendgrid.com/) using a no-reply address on the apsim.info domain (note that this address is not a mailbox). SendGrid relies on some DNS entries (which we manage ourselves).
+
 ## Running the Website
 
 The website reads several credentials from environment variables. Some parts of the website will not function correctly if these variables are not set.
