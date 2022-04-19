@@ -99,7 +99,7 @@ Testing apsim pull requests is handled by a job called apsim. The jenkins config
 
 The unit tests take a few minutes to run on a 4 core Linux VM. They require a github personal access token in order to verify that the pull request actually references an issue. If it doesn't, the build will immediately fail.
 
-The validation tests run all .apsimx files in the repository. If any simulation fails, the entire build is failed. If no simulations fail, the [performance tests](POSTATS.md) collector will run. If this succeeds, then the autodocs are built and uploaded to the APSIM.Builds API (POSTed to /api/nextgen/upload/docs).
+The validation tests run all .apsimx files in the repository. If any simulation fails, the entire build is failed. If no simulations fail, the [performance tests](postats.md) collector will run. If this succeeds, then the autodocs are built and uploaded to the APSIM.Builds API (POSTed to /api/nextgen/upload/docs).
 
 Credentials required by the validation tests:
 
@@ -109,7 +109,7 @@ Credentials required by the validation tests:
 
 ## Apsim Releases
 
-Releasing new apsim builds is handled by a job called apsim-release. The jenkins file is located in the [Jenkins](https://github.com/APSIMInitiative/Jenkins/tree/master/NextGen/deploy/jenkinsfile) repo. This job will build [installers](INSTALLERS.md) for each of the 3 target platforms (Linux, mac, windows), updates the [official docker images](DOCKER.md) on dockerhub, and updates the [netlify site](NETLIFY.md). If all of this succeeds, the build will be "released" by calling a REST endpoint in the [builds API](BUILDS.md). Once the build is released in this way, a link to the build will start appearing in places like the [downloads page](https://registration.apsim.info) and the upgrade area of the apsim GUI.
+Releasing new apsim builds is handled by a job called apsim-release. The jenkins file is located in the [Jenkins](https://github.com/APSIMInitiative/Jenkins/tree/master/NextGen/deploy/jenkinsfile) repo. This job will build [installers](installers.md) for each of the 3 target platforms (Linux, mac, windows), updates the [official docker images](docker.md) on dockerhub, and updates the [netlify site](netlify.md). If all of this succeeds, the build will be "released" by calling a REST endpoint in the [builds API](builds.md). Once the build is released in this way, a link to the build will start appearing in places like the [downloads page](https://registration.apsim.info) and the upgrade area of the apsim GUI.
 
 The windows installer unfortunately needs to be built on a windows VM (technically we could do it in Linux, but the assemblies would be missing some features provided by windows-only APIs).
 

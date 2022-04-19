@@ -6,7 +6,7 @@ Note that there was a change in nomenclature (around 2020) from PerformanceTests
 
 ## Collector
 
-The POStats collector reads the outputs from each of the apsim validation files and submits the outputs/stats to the API. The collector is a .net console application and is built and run automatically as part of the [apsim test suite](JENKINS.md).
+The POStats collector reads the outputs from each of the apsim validation files and submits the outputs/stats to the API. The collector is a .net console application and is built and run automatically as part of the [apsim test suite](jenkins.md).
 
 ## API
 

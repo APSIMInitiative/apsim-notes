@@ -1,6 +1,6 @@
 # APSIM.Builds API
 
-APSIM.Builds is a websites and REST API tracking metadata around apsim upgrades/releases. The source code is [on github](https://github.com/APSIMInitiative/APSIM.Builds). The website is an asp .net core application connected to a MariaDB database. The site runs inside docker behind a reverse proxy (apache) on a Linux GCP VM (see [apsim-web](GCP.md)).
+APSIM.Builds is a websites and REST API tracking metadata around apsim upgrades/releases. The source code is [on github](https://github.com/APSIMInitiative/APSIM.Builds). The website is an asp .net core application connected to a MariaDB database. The site runs inside docker behind a reverse proxy (apache) on a Linux GCP VM (see [apsim-web](gcp.md)).
 
 All of the write-access API endpoints require authentication in the form of a JWT. We don't currently have an official JWT server; I've manually generated the tokens from the private key used to validate them. There is code in the APSIM.Builds repo (`Startup.BuildToken()`) to facilitate creating more tokens if need be.
 
@@ -17,9 +17,9 @@ Currently, the website must be updated manually, by ssh-ing into the apsim-web s
 The API is called from the following places:
 
 - APSIM GUI: called by the upgrades area of the GUI to populate the list of available upgrades. Also used in the "run on cloud" feature to (again) list the available versions of apsim
-- [Registrations website](REGISTRATION.md): Called from the downloads page to list the available versions of apsim for download
+- [Registrations website](registration.md): Called from the downloads page to list the available versions of apsim for download
 - Jenkins: Called by CI/CD infrastructure and scripts to upload installers, documentation, add new builds to the DB, etc
-- [Netlify site](NETLIFY.md): Used to populate the model documentation (autodocs) page
+- [Netlify site](netlify.md): Used to populate the model documentation (autodocs) page
 - GitHub: A github webhook is sent upon most pull request events in order to conditionally trigger jenkins release builds
 
 Old versions of apsim also hit the following endpoint:
@@ -28,4 +28,4 @@ Old versions of apsim also hit the following endpoint:
 http://apsimdev.apsim.info/APSIM.Builds.Service/Builds.svc?GetUpgradesSinceIssue?issueID={issue}
 ```
 
-This is still accessible on the [apsimdev](GCP.md) server, which will proxy requests through to the apsim-web server, where the current builds API runs.
+This is still accessible on the [apsimdev](gcp.md) server, which will proxy requests through to the apsim-web server, where the current builds API runs.
