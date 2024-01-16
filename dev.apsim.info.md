@@ -11,3 +11,5 @@ Each of these apps are deployed via docker-compose. In addition, apache2 is also
 
 All files for the server are in the repo: https://github.com/APSIMInitiative/apsim-web. This is cloned to ~/sources/apsim-web. Each of the above apps and apache (http) are contained in directories in the rep and are deployed via separate *deploy* scripts.
 
+To ssh to dev.apsim.info use:
+    ssh webmaster@dev.apsim.info
